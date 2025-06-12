@@ -1,5 +1,6 @@
 .env*
 .venv*
 *.log
-/main/pictures/*
+main/pictures/*
+!main/pictures/.gitkeep
 __pycache__/
