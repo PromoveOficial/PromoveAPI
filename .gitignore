@@ -2,5 +2,5 @@
 .venv*
 *.log
 main/pictures/*
-!main/pictures/.gitkeep
+!main/pictures/products/.gitkeep
 __pycache__/
