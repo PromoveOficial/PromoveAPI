@@ -32,9 +32,10 @@ class Product(Resource):
 
     def __init__(self, id=None, data=None): #id can be the numerical id or the url
         try:
-            if id is None ^ data is None: # xor
+            if (id is None and data is None) or (id is not None and data is not None): # xor
                 raise ParameterError()
             
+            print(data, id)
             if data is not None:
                 self.__add_product_to_database(data)
                 product = data
@@ -50,9 +51,8 @@ class Product(Resource):
             self.category = product['category']
             self.price = product['price']
             
-            
         except ParameterError as e:
-            log(f"[FAIL PRODUCT INIT]: {e}")
+            log(f"[FAIL PRODUCT INIT]: {e.__str__}")
             
     """
         Right request example:
@@ -120,6 +120,15 @@ class Product(Resource):
             log(f"[{request.host}]: {response}")
             return response.content
     
+    """ 
+        Right Requisition example:
+        curl -X GET https://url/pedraobot/products?tk=verify_token&query_type=exact&identifier=30
+        query_type can be exact or like for a search precisely for a product or all that matches respectively
+        like is in development yet so don't use that 
+        
+        if you choose query_type=exact, you must pass a identifier= id or url of the product
+        if you choose query_type=like just pass the query and we will do the rest bitch
+    """
     def get(self):
         response = None
         try:    
@@ -128,7 +137,7 @@ class Product(Resource):
             
             if token != VERIFY_TOKEN:
                 raise Unauthorized(request.host)
-
+            
             query_type = request.args.get('query-type')
             if query_type not in ['exact', 'like']:
                 raise QueryNotSupported()

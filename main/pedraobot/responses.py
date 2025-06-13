@@ -2,7 +2,6 @@ class FailAddingProduct(Exception):
     pass
 
 class ParameterError(Exception):
-    
     def __str__():
         return "Both or no id/data provideded."    
 
