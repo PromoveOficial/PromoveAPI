@@ -2,5 +2,5 @@
 .venv*
 *.log
 main/pictures/*
-!main/pictures/products/.gitkeep
+!main/pictures/pedraobot/products/.gitkeep
 __pycache__/

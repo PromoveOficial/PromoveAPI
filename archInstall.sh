@@ -1,7 +1,18 @@
 #!/bin/bash
 
+sudo pacman -Syu httpd postgresql python python-pip
 #git pull origin main
-sudo cp server/promove_api.conf /etc/httpd/conf/extra/promove_api.conf
+
+$PATH_SERVER_DIR=/etc/httpd/conf/extra
+
+if [ ! -e "$PATH_SERVER_DIR/promove_api.conf" ]; then
+    cp server/promove_api.conf $PATH_SERVER_DIR/promove_api.conf
+fi
+
+if [ ! diff -q "$PATH_SERVER_DIR/promove_api.conf" "/server/promove_api.conf" > /dev/null]
+    cp server/promove_api.conf $PATH_SERVER_DIR/promove_api.conf
+fi
+
 sudo httpd -t
 sudo systemctl reload httpd
 

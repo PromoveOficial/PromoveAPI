@@ -18,9 +18,9 @@ Group=http
 WorkingDirectory=/home/kaiqbbrs/promove/general_api
 
 #O comando para inicar o container do docker
-ExecStart=/usr/bin/docker-compose up --build
+ExecStart=/home/usuario/meu_projeto/venv/bin/gunicorn --workers 3 --bind localhost:5001 app:app
 
-ExecStop=/usr/bin/docker-compose down -v
+ExecStop=
 
 # Reiniciar o serviço sempre que ele falhar.
 Restart=always

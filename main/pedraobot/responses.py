@@ -32,29 +32,22 @@ class RequestError(Response):
         super().__init__(code, status)   
         
     def __str__(self):
-        return  f"[{self.code}: {self.status}]{self.message}"
+        return  f"[{self.code}: {self.status}] {self.message}"
 
 # Especific Request Errors
 class Unauthorized(RequestError):
-    def __init__(self, host):
+    def __init__(self):
         code = 401
         status = "Unauthorized."
-        message = "You don't have permission to access that resource"        
-        self.host = host
+        message = "You don't have permission to access that resource"  
 
         super().__init__(code, message, status)
-        
-        self.warning()
-
-          
-    def warning(self):
-        #implementar mais tarde uma função que avisa o adm de qlqr tentativa de acesso n autorizada
-        pass        
+               
 class UnprocessableEntity(RequestError):
     def __init__(self):
         code = 422
         status = "Unprocessable Entity"
-        message = "Data doesn't match the exepected format"
+        message = "Data doesn't match the expected format."
         super().__init__(code, message, status)
         
 class InternalError(RequestError):
@@ -118,12 +111,5 @@ class NoParameter(RequestError):
         code = 400
         status = "Bad Request"
         message = f"Parameter(s): {parameters} missing."
-        super().__init__(code, message, status)
-        
-class ImageNotFoud(RequestError):
-    def __init__(self):
-        code = 400
-        status = "Bad Request"
-        message = f"Server didn't find the provided image."
         super().__init__(code, message, status)
         
