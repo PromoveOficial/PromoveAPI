@@ -1,6 +1,6 @@
 .env*
 .venv*
 *.log
-main/pictures/*
+main/pictures/pedraobot/products/*
 !main/pictures/pedraobot/products/.gitkeep
 __pycache__/
