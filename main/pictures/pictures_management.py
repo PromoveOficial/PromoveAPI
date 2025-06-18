@@ -8,6 +8,7 @@ import requests
 import re
 import logging
 import io
+import os
 from flask_restful import Resource
 from flask import request, send_file
 from PIL import Image
@@ -44,9 +45,9 @@ class DownloadPicturesPedraobot(Resource):
             if not re.match(RULE_URL, url):
                 raise WrongUrlFormat()
             
-            self.__download_picture(picture_name=name, picture_url=url)
+            picture_path = self.__download_picture(picture_name=name, picture_url=url)
             
-            response = RequestComplete('Picture save success')
+            response = RequestComplete({'picture_path': picture_path})
         except RequestError as e:
             response = e
         except Exception as e:
@@ -70,8 +71,9 @@ class DownloadPicturesPedraobot(Resource):
         image.save(picture_path, "PNG")        
         
         self.logger.info(f"[SUCCESS: DOWNLOAD PICTURE] {picture_url} - Saved as {picture_name}")
-
-class GetPicturesPedrabot(Resource):
+        return picture_path
+    
+class GetDeletePicturesPedrabot(Resource):
     def __init__(self):
         logger = logging.getLogger(__name__)
         logger.setLevel(logging.DEBUG)
@@ -89,15 +91,28 @@ class GetPicturesPedrabot(Resource):
     
     def get(self, identifier):
         try:
-            
+            self.logger.debug(identifier)
             response = send_file(f"main/pictures/pedraobot/products/{identifier}.png", mimetype='image/png')
-       
-        except RequestError as e:
-            response = e.content
+
+        except FileNotFoundError as e:
+            response = ImageNotFoud().content
         except Exception as e:
             self.logger.critical(f"[EXCEPTIONAL ERROR] {e}")
             response = ExceptionalError().content
         finally:
             self.logger.info(f"{response.__str__()}")
             return response
+        
+    def delete(self, identifier):
+        try:
+            file_path = f"main/pictures/pedraobot/products/{identifier}.png"
+            response = RequestComplete("Picture deleted with success")
+
+            os.remove(file_path)
+        except Exception as e:
+            self.logger.critical(f"[EXCEPTIONAL ERROR] {e}")
+            response = ExceptionalError().content
+        finally:
+            self.logger.info(f"{response.__str__()}")
+            return response.content
     

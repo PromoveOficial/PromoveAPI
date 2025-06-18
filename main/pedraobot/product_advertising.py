@@ -196,14 +196,26 @@ class Product(Resource):
 
     def __add_product_to_database(self, data: object):
         self.logger.info(f"[TRY: ADD PRODUCT] product/{data['url']}")
+        
+        save_picture_parameters = {'picture_url': data['picture_url'], 'picture_name': product_id}
+        url_pictures = os.environ.get('URL_PICTURES_SERVER')
+        picture_result = requests.post(url_pictures, params=save_picture_parameters)
+        
+        if picture_result['Code'] != 200:
+            self.__delete_product(product_id=product_id)
+            raise PictureMissing()
+        
+        picture_path = picture_result['Content']['picture_path']
+        
+        
         with psy.connect(**self.CONNECTION) as conn:
             with conn.cursor() as cur:
                 if self.__get_product_from_database(data['url'], check=True):
                     raise ProductAlredyExists()
                 
                 query = """
-                    INSERT INTO product (name, url, coupon, phrase, category)
-                    VALUES (%s, %s, %s, %s, %s)
+                    INSERT INTO product (name, url, coupon, phrase, category, picture_path)
+                    VALUES (%s, %s, %s, %s, %s, %s)
                     RETURNING id;
                 """
                 
@@ -212,16 +224,14 @@ class Product(Resource):
                     data['url'],
                     data['coupon'],
                     data['phrase'],
-                    data['category']
+                    data['category'],
+                    picture_path
                 ))
                 product_id = cur.fetchone()[0]
                 conn.commit()
                 
                 if not self.__add_price_to_database(product_id=product_id, price=data['price']):
                     self.__delete_product(product_id=product_id, picture=False, price=False)
-                
-                if not self.__download_picture(picture_url=data['picture_url'], product_id=product_id):
-                    self.__delete_product(product_id=product_id, picture=False)
                 
                 self.logger.info(f"[SUCCESS: ADD PRODUCT] product/{data['url']} - ID: {product_id}")
                 

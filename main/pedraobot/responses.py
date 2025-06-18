@@ -113,3 +113,9 @@ class NoParameter(RequestError):
         message = f"Parameter(s): {parameters} missing."
         super().__init__(code, message, status)
         
+class PictureMissing(RequestError):
+    def __init__(self):
+        code = 500
+        status = "Internal Server Error"
+        message = "Wasn't possible save the picture."
+        super().__init__(code, message, status)
