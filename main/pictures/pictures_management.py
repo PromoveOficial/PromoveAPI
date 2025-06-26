@@ -32,7 +32,7 @@ class DownloadPicturesPedraobot(Resource):
     
     def post(self):
         try:
-            RULE_URL = r'^https?:\/\/[A-Za-z\$\-=&\.\/?_0-9:]+$' # http or http (Caracters without accent) Numbers $ - = / ? _ :
+            RULE_URL = r'^https?:\/\/[\w\d\$\-=&\.\/?_:\+]+$' # http or http (Caracters without accent) Numbers $ - = / ? _ :
             
             url = request.args.get('picture-url')
             name = request.args.get('picture-name')

@@ -63,8 +63,8 @@ class Product(Resource):
     """
     def post(self):
         try: 
-            RULE_URL = r'^https:\/\/[A-Za-z\$\-=&\.\/?_0-9:]+$' # (Caracters without accent) Numbers $ - = / ? _ :
-            RULE_NAME = r'^[A-Za-z0-9:\-\.\/ á-úÁ-Úà-ùÀ-Ùâ-ûÂ-Ûã-ũÃ-Ũ]+$' # (Caracter without accent or with that accents: ^ ~ ´ `) Numbers : - . /
+            RULE_URL = r'^https:\/\/[A-Za-z\$\-=&\.\/?_0-9:\_+]+$' # (Caracters without accent) Numbers $ - = / ? _ :
+            RULE_NAME = r'^[A-Za-z0-9:\-\.\/ á-úÁ-Úà-ùÀ-Ùâ-ûÂ-Ûã-ũÃ-Ũ!]+$' # (Caracter without accent or with that accents: ^ ~ ´ `) Numbers : - . /
             RULE_PRICE = r'^\d{1,17}[\.,]\d{1,2}$' # from 1 to 17 numbers | 1 . or , | 2 more numbers for decimal
                         
             token = request.args.get('tk')
@@ -80,6 +80,8 @@ class Product(Resource):
             name = data['name']
             url = data['url']
             price = data['price']
+            
+            self.logger.info(url)
             
             # Verify if important data matches needed formart
             if not (
